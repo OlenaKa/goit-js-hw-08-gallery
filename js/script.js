@@ -88,6 +88,6 @@ function slideImages (e) {
   imageModalRef.setAttribute('alt', `${prevImgAltRef}`)
  }
 
- console.log(prevImgIndex)
+
 }
 
