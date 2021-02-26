@@ -10,16 +10,15 @@ const modalOverlayRef = document.querySelector('.lightbox__overlay');
 
 function createGalleryElement (galleryItems) {
 
- return galleryItems.map((({preview, description})=>{
-    return `<li class="gallery__item"> 
-    <img src=${preview} alt="${description}" class="gallery__image"/>
-   </li>' `
+ return galleryItems.map((({preview, original, description})=>{
+    return `<li class="gallery__item"><a class="gallery__link" href="${preview}"> <img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}"/></a></li> `
   }
     )).join('');
+    
    
 }
 
-galleryListRef.innerHTML = createGalleryElement(galleryItems);
+galleryListRef.innerHTML =createGalleryElement(galleryItems) ;
 
 galleryListRef.addEventListener('click', onImageClick);
 
@@ -32,20 +31,21 @@ document.addEventListener('keydown', closeModalOnEsc);
 document.addEventListener('keydown', slideImages)
 
 function onImageClick (e) {
-  if (!e.target.classList.contains('gallery__image')){
-    return;
-  }
-  const image = e.target
-  modalRef.classList.add('is-open');
-  imageModalRef.setAttribute('alt', image.getAttribute('alt'))
-  imageModalRef.setAttribute('src', findImageRef(galleryItems,image))
- 
-}
+ e.preventDefault();
 
-function findImageRef (galleryItems, image) {
-   let SourceObj = galleryItems.find(({description})=>description === image.getAttribute('alt'))
+ if (e.target.nodeName === 'A') {
+  e.preventDefault();
+ }
+  if (!e.target.classList.contains('gallery__image')){
   
-   return `${SourceObj.original}`
+   return;
+  } 
+
+    const image = e.target
+  modalRef.classList.add('is-open');
+  imageModalRef.alt = image.alt
+ imageModalRef.src=image.dataset.source
+  
   
 }
 
@@ -62,11 +62,12 @@ function closeModalOnEsc (e) {
  
 }
 
-
 function slideImages (e) {
-  let currentImgSrcObj = galleryItems.find(({description},)=>description === imageModalRef.getAttribute('alt'))
+ 
+  let currentImgSrcObj = galleryItems.find(({description,})=>description === imageModalRef.getAttribute('alt'))
   
   let currentImgIndex = galleryItems.indexOf(currentImgSrcObj)
+ 
   let nextImgIndex = currentImgIndex<galleryItems.length-1 ? currentImgIndex+1 : 0;
   
   let prevImgIndex = currentImgIndex!==0 ? currentImgIndex-1 : galleryItems.length-1
