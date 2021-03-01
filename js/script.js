@@ -11,14 +11,43 @@ const modalOverlayRef = document.querySelector('.lightbox__overlay');
 function createGalleryElement (galleryItems) {
 
  return galleryItems.map((({preview, original, description})=>{
-    return `<li class="gallery__item"><a class="gallery__link" href="${preview}"> <img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}"/></a></li> `
+    return `<li class="gallery__item">
+    <a class="gallery__link" href="${preview}">
+    <img class="gallery__image lazyload" data-src="${preview}" data-source="${original}" alt="${description}" loading="lazy" width="340px" height="240px"/>
+    </a>
+    </li> `
   }
     )).join('');
-    
+  
    
 }
-
 galleryListRef.innerHTML =createGalleryElement(galleryItems) ;
+
+
+
+if ('loading' in HTMLImageElement.prototype) {
+  addSrcAttr()
+} else {
+  addScriptLazyLoading()
+}
+
+function addSrcAttr () {
+  const imagesRef = document.querySelectorAll('img[loading="lazy"]');
+  console.log(imagesRef)
+  imagesRef.forEach(image => {
+    image.src=image.dataset.src;
+   
+  });
+}
+
+function addScriptLazyLoading (){
+  const script = document.createElement('script');
+  script.src =
+    'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js';
+  document.body.appendChild(script);
+}
+
+
 
 galleryListRef.addEventListener('click', onImageClick);
 
